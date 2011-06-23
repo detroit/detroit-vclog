@@ -1,0 +1,22 @@
+= Detroit VCLog Tool
+
+
+== DESCRIPTION
+
+VCLog tool can generate ChangeLog and History files
+from SCM commit messages.
+
+
+== INSTALL
+
+  $ gem install detroit-vclog
+
+
+== COPYRIGHT
+
+Copyright (c) 2011 Thomas Sawyer
+
+GPL v.3 license
+
+See COPYING.rdoc and GPL3.txt file for details.
+
