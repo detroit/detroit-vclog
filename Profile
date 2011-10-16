@@ -1,16 +1,27 @@
 ---
-name : detroit-vclog
-title: Detroit VCLog
-
-contact: trans <transfire@gmail.com>
+name    : detroit-vclog
+version : 0.1.0
+title   : Detroit VCLog
+summary : VCLog plugin for Detroit
 
 description:
-  VCLog plugin for Detroit build system.
+  VCLog plugin for Detroit build system. This plugin
+  generates changelog and/or history documents for a
+  project during the document phase.
 
 resources:
   home: http://detroit.github.com/
   code: http://github.com/detroit/detroit-vclog
+  mail: http://groups.google.com/group/rubyworks-mailinglist
 
-copyright:
-  (c) 2011 Thomas Sawyer
+requirements:
+  - detroit
+  - vclog
 
+authors:
+  - T. Sawyer <transfire@gmail.com>
+
+copyrights:
+  - (c) 2011 Thomas Sawyer (GPL-3)
+
+source: Profile

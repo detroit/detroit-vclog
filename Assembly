@@ -1,0 +1,37 @@
+---
+gem:
+  active: true
+
+qedoc:
+  active: false
+  files : qed/
+  title : Detroit
+  output: QED.rdoc
+
+yard:
+  active   : true
+  readme   : [ "README.rdoc" ]
+  topfiles : [ "[A-Z][A-Z]*" ]
+  files    : [ lib ]
+  exclude  : [ lib/detroit.yml ]
+  output   : doc
+  extra    : ~
+  priority : 1
+
+dnote:
+  title : Developer's Notes
+  output: log/NOTES.rdoc
+
+locat:
+  active: false
+
+github:
+  active: true
+
+announce:
+  service: email
+  mailto : 
+    - ruby-talk@ruby-lang.org
+    - rubyworks-mailinglist@googlegroups.com
+    - transfire@gmail.com
+
