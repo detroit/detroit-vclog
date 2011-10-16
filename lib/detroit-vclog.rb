@@ -11,19 +11,36 @@ module Detroit
   # TODO: Support multiple formats in one pass.
   class VClog < Tool
 
+    #
+    VALID_FORMATS = /^(html|yaml|json|xml|rdoc|md|markdown|gnu|txt|atom|rss|ansi)$/
+
+    #
+    VALID_TYPES = /^(log|rel|history|changelog)$/
+
+
+    #  A T T R I B U T E S
+
     # Current version of project.
     attr_accessor :version
 
     # Changelog layout type (+changelog+ or +history+). Default is +changelog+.
     attr_reader :type
 
-    # Changelog format(s). Supports the following formats: `html`, `xml`,
-    # `atom`, `rss`, `json`, `yaml`, `rdoc`, `markdown` and `md`, `ansi`,
-    # `gnu` and `txt`.
+    # Output is either a file name with a clear extension to infer type
+    # or a list of such file names, or a hash mapping file name to type.
     #
-    attr_accessor :formats
-
-    # Output directory in which store rendered files.
+    #   output: NOTES.rdoc
+    #
+    #   output:
+    #     - NOTES.rdoc
+    #     - site/notes.html
+    #
+    #   output:
+    #     NOTES: markdown
+    #     site/notes.html: html
+    #
+    # Recognized formats include `html`, `xml`, `atom`, `rss`, `json`, `yaml`,
+    # `rdoc`, `markdown` and `md`, `ansi`, `gnu` and `txt`.
     attr_accessor :output
 
     # Show revision numbers (true/false)?
@@ -41,56 +58,63 @@ module Detroit
     # Reduced detail?
     attr_accessor :summary
 
-    #
-    def initialize_defaults
-      @version    = metadata.version
-      @title      = metadata.title
-      @output     = project.log
-      @formats    = 'atom'
-      @type       = 'log'
-      @level      = 0
-      @summary    = false
-    end
-
-    #
-    VALID_FORMATS = /^(html|yaml|json|xml|rdoc|md|markdown|gnu|txt|atom|rss|ansi)$/
-
-    #
-    VALID_TYPES = /^(log|rel|history|changelog)$/
-
-    #
-    def valid?
-      return false unless formats.all?{ |f| f =~ VALID_FORMATS }
-      return false unless type   =~ VALID_TYPES
-      return true
-    end
-
-    #
-    alias_method :format=, :formats=
-
-    #
+    # Set output type.
     def type=(f)
-      @type = f.to_s.downcase
+      type = f.to_s.downcase
+      if type !~ VALID_TYPES
+        abort "Invalid vclog type - #{type}"
+      end
+      @type = type
     end
 
-    #++
-    # TODO: apply_naming_policy ?
-    #--
+
+    #  A S S E M B L Y  S T A T I O N S
+
+    #
+    def station_document
+      document
+    end
+
+    #
+    def station_reset
+      reset
+    end
+
+    #
+    def station_purge
+      purge
+    end
+
+
+    #  S E R V I C E  M E T H O D S
+
+    # TODO: Check the output files and see if they are older than
+    # the current change log.
+    #
+    # @return [Boolean] whether output is up-to-date
+    def current?
+      false
+      #output_mapping.each do |file, format|
+      #  return false if outofdate?(file, *dnote_session.files)
+      #else
+      #  "VCLogs are current."
+      #end
+    end
 
     # Generate the log.
     def document
-      require 'vclog'
-      formats_mapping.each do |format, fname|
-        file = File.join(output, fname)
+      output_mapping.each do |file, format, type|
+        next unless verify_format(format, file)
+        #file = File.join(output, fname)
+        trace "vclog --#{type} -f #{format} >> #{file}"
         if dryrun?
-          report "# vclog --#{type} -f #{format} >> #{file}"
           false # file hasn't changed
         else
-          changed = save(format, file)
+          changed = save(file, format, type)
           if changed
-            report "Updated #{relative_from_root(file)}"
+            report "Updated " + relative_from_root(file)
           else
-            report "Current #{relative_from_root(file)}"
+            report "Current " + relative_from_root(file)
           end
           changed
         end
@@ -98,23 +122,25 @@ module Detroit
     end
 
     # Save changelog/history to +output+ file.
-    def save(format, output)
-      text = render(format)
-      if File.exist?(output)
-        return false if File.read(output) == text
+    def save(file, format, type)
+      text = render(format, type)
+      if File.exist?(file)
+        return false if File.read(file) == text
       else
-        dir = File.dirname(output)
+        dir = File.dirname(file)
         mkdir_p(dir) unless File.exist?(dir)
       end
-      File.open(output, 'w'){ |f| f << text }
+      File.open(file, 'w'){ |f| f << text }
       return true
     end
 
     # Mark the output directory as out of date.
     def reset
-      if directory?(output)
-        utime(0, 0, output)
-        report "Reset #{output}" #unless trial?
+      output_mapping.each do |file, format, type|
+        if File.exist?(file)
+          utime(0,0,file)
+          report "Reset #{file}."
+        end
       end
     end
 
@@ -124,10 +150,114 @@ module Detroit
 
     # Remove output directory output directory.
     def purge
-      if directory?(output)
-        rm_r(output)
-        status "Removed #{output}" unless trial?
+      output_mapping.each do |file, format, type|
+        if File.exist?(file)
+          rm(file)
+          report "Removed #{file}"
+        end
       end
+    end
+
+    # Access to version control system.
+    def vcs
+      #@vcs ||= VCLog::VCS.new #(self)
+      #@vcs ||= VCLog::Adapters.factory(vclog_config)
+      @vcs ||= VCLog::Repo.new(project.root.to_s, :level=>level)
+    end
+
+    # Convert log to desired format.
+    def render(format, doctype)
+      doctype = type if doctype.nil?
+      doctype = 'history'   if doctype == 'rel'
+      doctype = 'changelog' if doctype == 'log'
+
+      options = {
+        :stylesheet => style,
+        :revision   => rev,
+        :version    => version,
+        :title      => title,
+        :extra      => !summary
+      }
+
+      vcs.display(doctype, format, options)
+    end
+
+  private
+
+    #
+    def verify_format(format, file)
+      if format !~ VALID_FORMATS
+        report "Invalid format for `#{file}' - `#{fmt}'."   # report_error
+        false
+      else
+        true
+      end
+    end
+
+    # Convert output into a list of [file, format, type].
+    #++
+    # TODO: apply_naming_policy ?
+    #--
+    def output_mapping
+      @output_mapping ||= (
+        list = []
+        case output
+        when Array
+          output.each do |path|
+            list << [path, infer_format(path), infer_type(path)]
+          end
+        when String
+          list << [output, infer_format(output), infer_type(output)]
+        when Hash
+          output.each do |path, format|
+            list << [path, format, infer_type(path)]
+          end
+        end
+        list
+      )
+    end
+
+    #
+    def infer_format(file)
+      fmt = File.extname(file).sub('.','')
+      fmt = DEFAULT_FORMAT if type.empty?
+      fmt
+    end
+
+    #
+    def infer_type(file)
+      case file
+      when /history/i
+        'history'
+      when /log/
+        'changelog'
+      else
+        type
+      end
+    end
+
+    #
+    def relative_from_root(path)
+      begin
+        Pathname.new(path).relative_path_from(project.root)
+      rescue
+        path
+      end
+    end
+
+    #
+    def initialize_requires
+      require 'vclog'
+    end
+
+    #
+    def initialize_defaults
+      @version    = metadata.version
+      @title      = metadata.title
+      @output     = project.log + 'changelog.atom'
+      @type       = 'log'
+      @level      = 0
+      @summary    = false
     end
 
     ## Returns changelog or history depending on type selection.
@@ -152,37 +282,7 @@ module Detroit
     #  )
     #end
 
-    # Access to version control system.
-    def vcs
-      #@vcs ||= VCLog::VCS.new #(self)
-      #@vcs ||= VCLog::Adapters.factory(vclog_config)
-      @vcs ||= VCLog::Repo.new(project.root.to_s, :level=>level)
-    end
-
-    # Convert log to desired format.
-    def render(format)
-      doctype = type
-      doctype = 'history'   if doctype == 'rel'
-      doctype = 'changelog' if doctype == 'log'
-
-      options = {
-        :stylesheet => style,
-        :revision   => rev,
-        :version    => version,
-        :title      => title,
-        :extra      => !summary
-      }
-
-      vcs.display(doctype, format, options)
-    end
-
-  private
-
-    #
-    def format_extension(format)
-      ".#{format}"
-    end
-
+=begin
     # Convert formats into a hash of `format => fname`.
     def formats_mapping(formats=nil)
       formats ||= self.formats
@@ -216,15 +316,19 @@ module Detroit
     end
 
     #
-    def relative_from_root(path)
-      begin
-        Pathname.new(path).relative_path_from(project.root)
-      rescue
-        path
-      end
+    def format_extension(format)
+      ".#{format}"
     end
+
+#    #
+#    def valid?
+#      return false unless output.all?{ |x, f| f =~ VALID_FORMATS }
+#      return false unless type =~ VALID_TYPES
+#      return true
+#    end
+
+=end
 
   end
 
 end
-
