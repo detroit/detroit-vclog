@@ -1,3 +1,5 @@
+require 'detroit/tool'
+
 module Detroit
 
   # VCLog tool.
