@@ -72,6 +72,15 @@ A fuller example might look something like this.
          - site/HISTORY.html
 
 
+## RESOURCES
+
+For more information:
+
+  * [API Documentation](http://rubydoc.info/gems/detroit-vclog)
+
+  * [Development Site](http://github.com/detroit/detroit-vclog)
+
+
 ## COPYRIGHT
 
 Copyright (c) 2010 Thomas Sawyer, Rubyworks
