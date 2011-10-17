@@ -1,0 +1,113 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "DETROIT\-VCLOG" "5" "October 2011" "" ""
+.
+.SH "NAME"
+\fBdetroit\-vclog\fR \- generate changelogs using vclog for detroit
+.
+.SH "DESCRIPTION"
+The VcLog plug\-in for Detroit utilize the \fBvclog\fR command line tool to generate nicely formated changelogs and/or history documents\.
+.
+.SH "OPTIONS"
+The following options can be used in the Detroit assembly file for defining a vclog service\.
+.
+.IP "\(bu" 4
+\fBoutput\fR \- Output is either a file name with a clear extension to infer the file format, or a list of such file names, or a hash mapping file name to file format\. Recognized formats include \fBhtml\fR, \fBxml\fR, \fBatom\fR, \fBrss\fR, \fBjson\fR, \fByaml\fR, \fBrdoc\fR, \fBmarkdown\fR and \fBmd\fR, \fBansi\fR, \fBgnu\fR and \fBtxt\fR\. See EXAMPLES below\.
+.
+.IP "\(bu" 4
+\fBlevel\fR \- Minimum change level to include\. VCLog categorizes commits by level\. This setting filters commits with a level lower than the figure given\.
+.
+.IP "\(bu" 4
+\fBrev\fR \- Show revision numbers\. Default is \fBfalse\fR\.
+.
+.IP "\(bu" 4
+\fBsummary\fR \- Show reduced detail\. Default is \fBfalse\fR\.
+.
+.IP "\(bu" 4
+\fBtitle\fR \- Some formats, such as +rdoc+, use a title field\. Defaults to project title from project metadata\.
+.
+.IP "\(bu" 4
+\fBversion\fR \- The current version of the project\. The default is extracted from project metadata\.
+.
+.IP "\(bu" 4
+\fBtype\fR \- Changelog layout type can be either \fBchangelog\fR or \fBhistory\fR\. If type is not given explicitly it will be infered from the name of the output file\. Otherwise if defaults to +changelog+\.
+.
+.IP "\(bu" 4
+\fBstyle\fR \- Use external stylesheet\. Some formats, namely \fBxml\fR and \fBhtml\fR, can use a stylesheet\. Give the location of this file reltive to the output\.
+.
+.IP "" 0
+.
+.SH "Examples:"
+The simplist entry is
+.
+.IP "" 4
+.
+.nf
+
+vclog:
+  output: HISTORY\.rdoc
+.
+.fi
+.
+.IP "" 0
+.
+.P
+To produce multiple formats use a list\.
+.
+.IP "" 4
+.
+.nf
+
+vclog:
+  output:
+    \- log/CHANGES\.md
+    \- log/HISTORY\.md
+.
+.fi
+.
+.IP "" 0
+.
+.P
+If the extension is atypical use a mapping\.
+.
+.IP "" 4
+.
+.nf
+
+ vclog:
+   output:
+     HISTORY: markdown
+     site/history\.html: html
+.
+.fi
+.
+.IP "" 0
+.
+.P
+A fuller example might look something like this\.
+.
+.IP "" 4
+.
+.nf
+
+ vclog:
+   rev: true
+   level: \-2
+   output:
+     \- HISTORY\.rdoc
+     \- CHANGELOG\.rdoc
+     \- site/HISTORY\.html
+.
+.fi
+.
+.IP "" 0
+.
+.SH "COPYRIGHT"
+Copyright (c) 2010 Thomas Sawyer, Rubyworks
+.
+.P
+Detroit VCLog is distributable in accordance with the GPL v\.3 license\.
+.
+.SH "SEE ALSO"
+detroit(1), vclog(1)
