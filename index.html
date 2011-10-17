@@ -1,1 +1,162 @@
-My GitHub Page
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='content-type' value='text/html;charset=utf8'>
+  <meta name='generator' value='Ronn/v0.7.3 (http://github.com/rtomayko/ronn/tree/0.7.3)'>
+  <title>detroit-vclog(5) - generate changelogs using vclog for detroit</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+</head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
+
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
+
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#DESCRIPTION">DESCRIPTION</a>
+    <a href="#OPTIONS">OPTIONS</a>
+    <a href="#Examples-">Examples:</a>
+    <a href="#COPYRIGHT">COPYRIGHT</a>
+    <a href="#SEE-ALSO">SEE ALSO</a>
+    </div>
+
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>detroit-vclog(5)</li>
+    <li class='tc'></li>
+    <li class='tr'>detroit-vclog(5)</li>
+  </ol>
+
+  <h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>detroit-vclog</code> - <span class="man-whatis">generate changelogs using vclog for detroit</span>
+</p>
+
+<h2 id="DESCRIPTION">DESCRIPTION</h2>
+
+<p>The VcLog plug-in for Detroit utilize the <code>vclog</code> command line tool
+to generate nicely formated changelogs and/or history documents.</p>
+
+<h2 id="OPTIONS">OPTIONS</h2>
+
+<p>The following options can be used in the Detroit assembly file
+for defining a vclog service.</p>
+
+<ul>
+<li><p><code>output</code> - Output is either a file name with a clear extension to infer
+the file format, or a list of such file names, or a hash mapping file name
+to file format. Recognized formats include <code>html</code>, <code>xml</code>, <code>atom</code>, <code>rss</code>,
+<code>json</code>, <code>yaml</code>, <code>rdoc</code>, <code>markdown</code> and <code>md</code>, <code>ansi</code>, <code>gnu</code> and <code>txt</code>.
+See EXAMPLES below.</p></li>
+<li><p><code>level</code> - Minimum change level to include. VCLog categorizes commits
+ by level. This setting filters commits with a level lower than the
+ figure given.</p></li>
+<li><p><code>rev</code> - Show revision numbers. Default is <code>false</code>.</p></li>
+<li><p><code>summary</code> - Show reduced detail. Default is <code>false</code>.</p></li>
+<li><p><code>title</code> - Some formats, such as +rdoc+, use a title field.
+ Defaults to project title from project metadata.</p></li>
+<li><p><code>version</code> - The current version of the project. The default is extracted
+from project metadata.</p></li>
+<li><p><code>type</code> - Changelog layout type can be either <code>changelog</code> or <code>history</code>.
+ If type is not given explicitly it will be infered from the name of
+ the output file. Otherwise if defaults to +changelog+.</p></li>
+<li><p><code>style</code> - Use external stylesheet. Some formats, namely <code>xml</code> and <code>html</code>,
+can use a stylesheet. Give the location of this file reltive to the output.</p></li>
+</ul>
+
+
+<h2 id="Examples-">Examples:</h2>
+
+<p>The simplist entry is</p>
+
+<pre><code>vclog:
+  output: HISTORY.rdoc
+</code></pre>
+
+<p>To produce multiple formats use a list.</p>
+
+<pre><code>vclog:
+  output:
+    - log/CHANGES.md
+    - log/HISTORY.md
+</code></pre>
+
+<p>If the extension is atypical use a mapping.</p>
+
+<pre><code> vclog:
+   output:
+     HISTORY: markdown
+     site/history.html: html
+</code></pre>
+
+<p>A fuller example might look something like this.</p>
+
+<pre><code> vclog:
+   rev: true
+   level: -2
+   output:
+     - HISTORY.rdoc
+     - CHANGELOG.rdoc
+     - site/HISTORY.html
+</code></pre>
+
+<h2 id="COPYRIGHT">COPYRIGHT</h2>
+
+<p>Copyright (c) 2010 Thomas Sawyer, Rubyworks</p>
+
+<p>Detroit VCLog is distributable in accordance with the GPL v.3 license.</p>
+
+<h2 id="SEE-ALSO">SEE ALSO</h2>
+
+<p><span class="man-ref">detroit<span class="s">(1)</span></span>, <span class="man-ref">vclog<span class="s">(1)</span></span></p>
+
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'></li>
+    <li class='tc'>October 2011</li>
+    <li class='tr'>detroit-vclog(5)</li>
+  </ol>
+
+  </div>
+</body>
+</html>
