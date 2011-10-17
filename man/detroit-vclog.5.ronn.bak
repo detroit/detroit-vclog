@@ -3,8 +3,8 @@ detroit-vclog(5) - generate changelogs using vclog for detroit
 
 ## DESCRIPTION
 
-The VCLog plug-in for Detroit utilize the `vclog` command line tool
-to generate nicely formatted changelogs and/or history documents.
+The VcLog plug-in for Detroit utilize the `vclog` command line tool
+to generate nicely formated changelogs and/or history documents.
 
 
 ## OPTIONS
@@ -33,16 +33,16 @@ for defining a vclog service.
     from project metadata.
 
   * `type` - Changelog layout type can be either `changelog` or `history`.
-     If type is not given explicitly it will be inferred from the name of
+     If type is not given explicitly it will be infered from the name of
      the output file. Otherwise if defaults to +changelog+. 
 
   * `style` - Use external stylesheet. Some formats, namely `xml` and `html`,
-    can use a stylesheet. Give the location of this file relative to the output.
+    can use a stylesheet. Give the location of this file reltive to the output.
 
 
 ## Examples:
 
-The simplest entry is
+The simplist entry is
 
     vclog:
       output: HISTORY.rdoc
