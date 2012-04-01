@@ -45,8 +45,8 @@ module Detroit
     # `rdoc`, `markdown` and `md`, `ansi`, `gnu` and `txt`.
     attr_accessor :output
 
-    # Show revision numbers (true/false)?
-    attr_accessor :rev
+    # Show revision/reference numbers (true/false)?
+    attr_accessor :id
 
     # Some formats, such as +rdoc+, use a title field. Defaults to project title.
     attr_accessor :title
@@ -56,6 +56,9 @@ module Detroit
 
     # Minimum change level to include.
     attr_accessor :level
+
+    # Divide messages into change points (true/false)?
+    attr_accessor :point
 
     # Reduced detail?
     attr_accessor :summary
@@ -70,21 +73,24 @@ module Detroit
     end
 
 
-    #  A S S E M B L Y  S T A T I O N S
+    #  A S S E M B L Y  M E T H O D S
 
     #
-    def station_document
-      document
+    def assemble?(station, options={})
+      case station
+      when :document then true
+      when :reset    then true
+      when :purge    then true
+      end
     end
 
     #
-    def station_reset
-      reset
-    end
-
-    #
-    def station_purge
-      purge
+    def assemble(station)
+      case station
+      when :document then document
+      when :reset    then reset
+      when :purge    then purge
+      end
     end
 
 
@@ -161,10 +167,8 @@ module Detroit
     end
 
     # Access to version control system.
-    def vcs
-      #@vcs ||= VCLog::VCS.new #(self)
-      #@vcs ||= VCLog::Adapters.factory(vclog_config)
-      @vcs ||= VCLog::Repo.new(project.root.to_s, :level=>level)
+    def repo
+      @repo ||= VCLog::Repo.new(project.root.to_s)
     end
 
     # Convert log to desired format.
@@ -174,14 +178,18 @@ module Detroit
       doctype = 'changelog' if doctype == 'log'
 
       options = {
+        :type       => doctype,
+        :format     => format,
         :stylesheet => style,
-        :revision   => rev,
+        :level      => level,
+        :point      => point,
+        :is         => id,
         :version    => version,
         :title      => title,
-        :extra      => !summary
+        :summary    => summary
       }
 
-      vcs.display(doctype, format, options)
+      repo.report(options)
     end
 
   private
@@ -267,11 +275,11 @@ module Detroit
     #  @log ||= (
     #    case type
     #    when 'log', 'changelog'
-    #      log = vcs.changelog
+    #      log = repo.changelog
     #    when 'rel', 'history'
-    #      log = vcs.history(:title=>title, :version=>version)
+    #      log = repo.history(:title=>title, :version=>version)
     #    else
-    #      log = vcs.changelog
+    #      log = repo.changelog
     #    end
     #  )
     #end
