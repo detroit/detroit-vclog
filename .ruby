@@ -26,7 +26,7 @@ revision: 0
 created: '2011-10-16'
 summary: VCLog plugin for Detroit
 title: Detroit VCLog
-version: 0.1.0
+version: 0.2.0
 name: detroit-vclog
 suite: detroit
 description: VCLog plugin for Detroit build system. This plugin generates changelog
