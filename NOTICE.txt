@@ -1,8 +1,6 @@
-= COPYRIGHT NOTICES
+Detroit VcLog (http://detroit.github.com)
 
-== Detroit VcLog
-
-Copyright (c) 2011 Thomas Sawyer
+Copyright (c) 2011 Rubyworks
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,6 +14,4 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-(http://detroit.github.com)
 

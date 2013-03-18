@@ -1,0 +1,45 @@
+---
+revision: 2013
+type: ruby
+sources:
+- var
+authors:
+- name: T. Sawyer
+  email: transfire@gmail.com
+organizations:
+- name: Rubyworks
+requirements:
+- version: 0.3.0+
+  name: detroit
+- name: vclog
+conflicts: []
+alternatives: []
+resources:
+- type: home
+  uri: http://detroit.github.com/
+  label: Homepage
+- type: code
+  uri: http://github.com/detroit/detroit-vclog
+  label: Source Code
+- type: mail
+  uri: http://groups.google.com/group/rubyworks-mailinglist
+  label: Mailing List
+repositories: []
+categories: []
+copyrights:
+- holder: Thomas Sawyer
+  year: '2011'
+  license: GPL-3
+customs: []
+paths:
+  lib:
+  - lib
+created: '2011-10-16'
+summary: VCLog plugin for Detroit
+title: Detroit VCLog
+version: 0.2.1
+name: detroit-vclog
+suite: detroit
+description: VCLog plugin for Detroit build system. This plugin generates changelog
+  and/or history documents for a project during the document phase.
+date: '2013-03-13'
