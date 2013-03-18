@@ -1,4 +1,4 @@
-require 'detroit/tool'
+require 'detroit-standard'
 
 module Detroit
 
@@ -12,6 +12,8 @@ module Detroit
   #
   # TODO: Support multiple formats in one pass.
   class VClog < Tool
+
+    system :standard
 
     #
     VALID_FORMATS = /^(html|yaml|json|xml|rdoc|md|markdown|gnu|txt|atom|rss|ansi)$/
